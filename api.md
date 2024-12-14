@@ -1,9 +1,3 @@
-# App
-
-Methods:
-
-- <code title="get /">client.App.<a href="https://pkg.go.dev/github.com/identety/identety-go-sdk#AppService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-
 # Clients
 
 Response Types:
