@@ -16,7 +16,6 @@ import (
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
 	Options []option.RequestOption
-	App     *AppService
 	Clients *ClientService
 	Users   *UserService
 	Orgs    *OrgService
@@ -36,7 +35,6 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r = &Client{Options: opts}
 
-	r.App = NewAppService(opts...)
 	r.Clients = NewClientService(opts...)
 	r.Users = NewUserService(opts...)
 	r.Orgs = NewOrgService(opts...)
