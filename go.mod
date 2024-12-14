@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/identety-go
+module github.com/identety/identety-go-sdk
 
 go 1.21
 
