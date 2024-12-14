@@ -6,8 +6,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/identety/identety-go-sdk/internal/requestconfig"
-	"github.com/identety/identety-go-sdk/option"
+	"github.com/stainless-sdks/identety-go/internal/requestconfig"
+	"github.com/stainless-sdks/identety-go/option"
 )
 
 // AppService contains methods and other services that help with interacting with
