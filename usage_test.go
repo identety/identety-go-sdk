@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/identety-go"
-	"github.com/stainless-sdks/identety-go/internal/testutil"
-	"github.com/stainless-sdks/identety-go/option"
+	"github.com/identety/identety-go-sdk"
+	"github.com/identety/identety-go-sdk/internal/testutil"
+	"github.com/identety/identety-go-sdk/option"
 )
 
 func TestUsage(t *testing.T) {

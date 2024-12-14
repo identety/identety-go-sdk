@@ -17,10 +17,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/identety-go/internal"
-	"github.com/stainless-sdks/identety-go/internal/apierror"
-	"github.com/stainless-sdks/identety-go/internal/apiform"
-	"github.com/stainless-sdks/identety-go/internal/apiquery"
+	"github.com/identety/identety-go-sdk/internal"
+	"github.com/identety/identety-go-sdk/internal/apierror"
+	"github.com/identety/identety-go-sdk/internal/apiform"
+	"github.com/identety/identety-go-sdk/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

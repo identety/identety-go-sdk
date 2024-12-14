@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stainless-sdks/identety-go/internal/param"
+	"github.com/identety/identety-go-sdk/internal/param"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc
