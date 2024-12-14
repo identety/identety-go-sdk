@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/identety/identety-go-sdk/internal/param"
+	"github.com/stainless-sdks/identety-go/internal/param"
 )
 
 var encoders sync.Map // map[reflect.Type]encoderFunc

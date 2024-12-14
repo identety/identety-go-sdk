@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/identety/identety-go-sdk/internal/param"
+	"github.com/stainless-sdks/identety-go/internal/param"
 )
 
 type Struct struct {

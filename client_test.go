@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/identety/identety-go-sdk"
-	"github.com/identety/identety-go-sdk/internal"
-	"github.com/identety/identety-go-sdk/option"
+	"github.com/stainless-sdks/identety-go"
+	"github.com/stainless-sdks/identety-go/internal"
+	"github.com/stainless-sdks/identety-go/option"
 )
 
 type closureTransport struct {

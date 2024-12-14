@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/identety/identety-go-sdk"
-	"github.com/identety/identety-go-sdk/internal/testutil"
-	"github.com/identety/identety-go-sdk/option"
+	"github.com/stainless-sdks/identety-go"
+	"github.com/stainless-sdks/identety-go/internal/testutil"
+	"github.com/stainless-sdks/identety-go/option"
 )
 
 func TestAppGet(t *testing.T) {
@@ -25,7 +25,7 @@ func TestAppGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Apps.Get(context.TODO())
+	err := client.App.Get(context.TODO())
 	if err != nil {
 		var apierr *identety.Error
 		if errors.As(err, &apierr) {
