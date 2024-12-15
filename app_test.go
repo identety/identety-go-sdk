@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/identety-go/option"
 )
 
-func TestRoleGet(t *testing.T) {
+func TestAppGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,7 +25,7 @@ func TestRoleGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Roles.Get(context.TODO(), "id")
+	err := client.App.Get(context.TODO())
 	if err != nil {
 		var apierr *identety.Error
 		if errors.As(err, &apierr) {

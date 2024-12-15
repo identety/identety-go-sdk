@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/identety/identety-go-sdk/internal/requestconfig"
-	"github.com/identety/identety-go-sdk/option"
+	"github.com/stainless-sdks/identety-go/internal/requestconfig"
+	"github.com/stainless-sdks/identety-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with
@@ -16,6 +16,7 @@ import (
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
 	Options []option.RequestOption
+	App     *AppService
 	Clients *ClientService
 	Users   *UserService
 	Orgs    *OrgService
@@ -35,6 +36,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r = &Client{Options: opts}
 
+	r.App = NewAppService(opts...)
 	r.Clients = NewClientService(opts...)
 	r.Users = NewUserService(opts...)
 	r.Orgs = NewOrgService(opts...)

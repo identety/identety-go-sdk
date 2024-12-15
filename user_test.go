@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/identety/identety-go-sdk"
-	"github.com/identety/identety-go-sdk/internal/testutil"
-	"github.com/identety/identety-go-sdk/option"
+	"github.com/stainless-sdks/identety-go"
+	"github.com/stainless-sdks/identety-go/internal/testutil"
+	"github.com/stainless-sdks/identety-go/option"
 )
 
 func TestUserNew(t *testing.T) {
