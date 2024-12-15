@@ -3,7 +3,7 @@
 package identety
 
 import (
-	"github.com/identety/identety-go-sdk/internal/apierror"
+	"github.com/stainless-sdks/identety-go/internal/apierror"
 )
 
 type Error = apierror.Error
