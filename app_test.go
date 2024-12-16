@@ -23,7 +23,6 @@ func TestAppGet(t *testing.T) {
 	}
 	client := identety.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
 	)
 	err := client.App.Get(context.TODO())
 	if err != nil {
