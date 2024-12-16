@@ -22,7 +22,6 @@ func TestUsage(t *testing.T) {
 	}
 	client := identety.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
 	)
 	user, err := client.Users.New(context.TODO(), identety.UserNewParams{
 		Address: identety.F(identety.UserNewParamsAddress{
