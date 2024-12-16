@@ -23,7 +23,6 @@ func TestUserNew(t *testing.T) {
 	}
 	client := identety.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Users.New(context.TODO(), identety.UserNewParams{
 		Address: identety.F(identety.UserNewParamsAddress{
@@ -63,7 +62,6 @@ func TestUserGet(t *testing.T) {
 	}
 	client := identety.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Users.Get(context.TODO(), "id")
 	if err != nil {
@@ -85,7 +83,6 @@ func TestUserUpdate(t *testing.T) {
 	}
 	client := identety.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Users.Update(
 		context.TODO(),
@@ -127,7 +124,6 @@ func TestUserListWithOptionalParams(t *testing.T) {
 	}
 	client := identety.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Users.List(context.TODO(), identety.UserListParams{
 		Columns: identety.F(identety.UserListParamsColumnsID),
@@ -155,7 +151,6 @@ func TestUserDelete(t *testing.T) {
 	}
 	client := identety.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Users.Delete(context.TODO(), "id")
 	if err != nil {
