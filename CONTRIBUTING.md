@@ -41,7 +41,7 @@ To use a local version of this library from source in another project, edit the 
 directive. This can be done through the CLI with the following:
 
 ```sh
-$ go mod edit -replace github.com/stainless-sdks/identety-go=/path/to/identety-go
+$ go mod edit -replace github.com/identety/identety-go-sdk=/path/to/identety-go-sdk
 ```
 
 ## Running tests
