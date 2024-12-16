@@ -5,7 +5,6 @@ package identety
 import (
 	"context"
 	"net/http"
-	"os"
 
 	"github.com/identety/identety-go-sdk/internal/requestconfig"
 	"github.com/identety/identety-go-sdk/option"
@@ -24,14 +23,11 @@ type Client struct {
 }
 
 // NewClient generates a new client with the default option read from the
-// environment (X_API_KEY). The option passed in as arguments are applied after
-// these default arguments, and all option will be passed down to the services and
+// environment (). The option passed in as arguments are applied after these
+// default arguments, and all option will be passed down to the services and
 // requests that this client makes.
 func NewClient(opts ...option.RequestOption) (r *Client) {
 	defaults := []option.RequestOption{}
-	if o, ok := os.LookupEnv("X_API_KEY"); ok {
-		defaults = append(defaults, option.WithAPIKey(o))
-	}
 	opts = append(defaults, opts...)
 
 	r = &Client{Options: opts}
