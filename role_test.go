@@ -23,6 +23,7 @@ func TestRoleGet(t *testing.T) {
 	}
 	client := identety.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
 	)
 	err := client.Roles.Get(context.TODO(), "id")
 	if err != nil {
