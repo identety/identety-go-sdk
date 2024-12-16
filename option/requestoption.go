@@ -220,3 +220,11 @@ func WithRequestTimeout(dur time.Duration) RequestOption {
 		return nil
 	}
 }
+
+// WithAPIKey returns a RequestOption that sets the client setting "api_key".
+func WithAPIKey(value string) RequestOption {
+	return func(r *requestconfig.RequestConfig) error {
+		r.APIKey = value
+		return r.Apply(WithHeader("x-api-key", r.APIKey))
+	}
+}

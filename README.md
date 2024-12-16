@@ -45,10 +45,13 @@ import (
 	"fmt"
 
 	"github.com/identety/identety-go-sdk"
+	"github.com/identety/identety-go-sdk/option"
 )
 
 func main() {
-	client := identety.NewClient()
+	client := identety.NewClient(
+		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("X_API_KEY")
+	)
 	user, err := client.Users.New(context.TODO(), identety.UserNewParams{
 		Address: identety.F(identety.UserNewParamsAddress{
 			Country:       identety.F("USA"),
@@ -273,7 +276,7 @@ which can be used to wrap any `io.Reader` with the appropriate file name and con
 
 ### Retries
 
-Certain errors will be automatically retried 10 times by default, with a short exponential backoff.
+Certain errors will be automatically retried 2 times by default, with a short exponential backoff.
 We retry by default all connection errors, 408 Request Timeout, 409 Conflict, 429 Rate Limit,
 and >=500 Internal errors.
 
