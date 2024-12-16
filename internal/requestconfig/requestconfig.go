@@ -146,7 +146,7 @@ func NewRequestConfig(ctx context.Context, method string, u string, body interfa
 		req.Header.Add(k, v)
 	}
 	cfg := RequestConfig{
-		MaxRetries: 10,
+		MaxRetries: 2,
 		Context:    ctx,
 		Request:    req,
 		HTTPClient: http.DefaultClient,
@@ -172,6 +172,7 @@ type RequestConfig struct {
 	BaseURL        *url.URL
 	HTTPClient     *http.Client
 	Middlewares    []middleware
+	APIKey         string
 	// If ResponseBodyInto not nil, then we will attempt to deserialize into
 	// ResponseBodyInto. If Destination is a []byte, then it will return the body as
 	// is.
@@ -286,8 +287,8 @@ func retryDelay(res *http.Response, retryCount int) time.Duration {
 		return retryAfterDelay
 	}
 
-	maxDelay := 30 * time.Second
-	delay := time.Duration(0 * float64(time.Second) * math.Pow(2, float64(retryCount)))
+	maxDelay := 8 * time.Second
+	delay := time.Duration(0.5 * float64(time.Second) * math.Pow(2, float64(retryCount)))
 	if delay > maxDelay {
 		delay = maxDelay
 	}
@@ -484,6 +485,7 @@ func (cfg *RequestConfig) Clone(ctx context.Context) *RequestConfig {
 		BaseURL:        cfg.BaseURL,
 		HTTPClient:     cfg.HTTPClient,
 		Middlewares:    cfg.Middlewares,
+		APIKey:         cfg.APIKey,
 	}
 
 	return new
