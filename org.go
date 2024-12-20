@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/stainless-sdks/identety-go/internal/requestconfig"
-	"github.com/stainless-sdks/identety-go/option"
+	"github.com/identety/identety-go-sdk/internal/requestconfig"
+	"github.com/identety/identety-go-sdk/option"
 )
 
 // OrgService contains methods and other services that help with interacting with

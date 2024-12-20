@@ -1,6 +1,6 @@
 # Identety Go API Library
 
-<a href="https://pkg.go.dev/github.com/stainless-sdks/identety-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/identety-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/identety/identety-go-sdk"><img src="https://pkg.go.dev/badge/github.com/identety/identety-go-sdk.svg" alt="Go Reference"></a>
 
 The Identety Go library provides convenient access to [the Identety REST
 API](https://docs.identety.dev) from applications written in Go. The full API of this library can be found in [api.md](api.md).
@@ -9,17 +9,25 @@ It is generated with [Stainless](https://www.stainlessapi.com/).
 
 ## Installation
 
+<!-- x-release-please-start-version -->
+
 ```go
 import (
-	"github.com/stainless-sdks/identety-go" // imported as identety
+	"github.com/identety/identety-go-sdk" // imported as identety
 )
 ```
 
+<!-- x-release-please-end -->
+
 Or to pin the version:
 
+<!-- x-release-please-start-version -->
+
 ```sh
-go get -u 'github.com/stainless-sdks/identety-go@v0.1.0-alpha.1'
+go get -u 'github.com/identety/identety-go-sdk@v0.1.0-alpha.2'
 ```
+
+<!-- x-release-please-end -->
 
 ## Requirements
 
@@ -36,22 +44,37 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/stainless-sdks/identety-go"
-	"github.com/stainless-sdks/identety-go/option"
+	"github.com/identety/identety-go-sdk"
+	"github.com/identety/identety-go-sdk/option"
 )
 
 func main() {
 	client := identety.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("X_API_KEY")
 	)
-	client, err := client.Clients.New(context.TODO(), identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	user, err := client.Users.New(context.TODO(), identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", client.ID)
+	fmt.Printf("%+v\n", user.ID)
 }
 
 ```
@@ -101,7 +124,7 @@ if res.Name == "" {
 	// true if `"name"` is either not present or explicitly null
 	res.JSON.Name.IsNull()
 
-	// true if the `"name"` key was not present in the repsonse JSON at all
+	// true if the `"name"` key was not present in the response JSON at all
 	res.JSON.Name.IsMissing()
 
 	// When the API returns data that cannot be coerced to the expected type:
@@ -140,7 +163,7 @@ client := identety.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Clients.New(context.TODO(), ...,
+client.Users.New(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -148,7 +171,7 @@ client.Clients.New(context.TODO(), ...,
 )
 ```
 
-See the [full list of request options](https://pkg.go.dev/github.com/stainless-sdks/identety-go/option).
+See the [full list of request options](https://pkg.go.dev/github.com/identety/identety-go-sdk/option).
 
 ### Pagination
 
@@ -169,9 +192,24 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Clients.New(context.TODO(), identety.ClientNewParams{
-	Name: identety.F("name"),
-	Type: identety.F(identety.ClientNewParamsTypePublic),
+_, err := client.Users.New(context.TODO(), identety.UserNewParams{
+	Address: identety.F(identety.UserNewParamsAddress{
+		Country:       identety.F("USA"),
+		Locality:      identety.F("New York"),
+		PostalCode:    identety.F("10001"),
+		Region:        identety.F("NY"),
+		StreetAddress: identety.F("123 Main St"),
+	}),
+	Email:      identety.F("john@example.com"),
+	FamilyName: identety.F("Doe"),
+	GivenName:  identety.F("John"),
+	Locale:     identety.F("en-US"),
+	Metadata: identety.F[any](map[string]interface{}{
+		"customField": "value",
+	}),
+	Name:     identety.F("John Doe"),
+	Password: identety.F("password123"),
+	Picture:  identety.F("https://example.com/photo.jpg"),
 })
 if err != nil {
 	var apierr *identety.Error
@@ -179,7 +217,7 @@ if err != nil {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
 	}
-	panic(err.Error()) // GET "/clients": 400 Bad Request { ... }
+	panic(err.Error()) // GET "/users": 400 Bad Request { ... }
 }
 ```
 
@@ -197,11 +235,26 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Clients.New(
+client.Users.New(
 	ctx,
-	identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
@@ -236,11 +289,26 @@ client := identety.NewClient(
 )
 
 // Override per-request:
-client.Clients.New(
+client.Users.New(
 	context.TODO(),
-	identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	},
 	option.WithMaxRetries(5),
 )
@@ -341,7 +409,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/identety-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/identety/identety-go-sdk/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 
