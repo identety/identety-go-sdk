@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/identety-go"
-	"github.com/stainless-sdks/identety-go/internal"
-	"github.com/stainless-sdks/identety-go/option"
+	"github.com/identety/identety-go-sdk"
+	"github.com/identety/identety-go-sdk/internal"
+	"github.com/identety/identety-go-sdk/option"
 )
 
 type closureTransport struct {
@@ -37,9 +37,24 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Clients.New(context.Background(), identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	client.Users.New(context.Background(), identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	})
 	if userAgent != fmt.Sprintf("Identety/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
@@ -63,9 +78,24 @@ func TestRetryAfter(t *testing.T) {
 			},
 		}),
 	)
-	res, err := client.Clients.New(context.Background(), identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	res, err := client.Users.New(context.Background(), identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	})
 	if err == nil || res != nil {
 		t.Error("Expected there to be a cancel error and for the response to be nil")
@@ -100,9 +130,24 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeaderDel("X-Stainless-Retry-Count"),
 	)
-	res, err := client.Clients.New(context.Background(), identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	res, err := client.Users.New(context.Background(), identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	})
 	if err == nil || res != nil {
 		t.Error("Expected there to be a cancel error and for the response to be nil")
@@ -132,9 +177,24 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeader("X-Stainless-Retry-Count", "42"),
 	)
-	res, err := client.Clients.New(context.Background(), identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	res, err := client.Users.New(context.Background(), identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	})
 	if err == nil || res != nil {
 		t.Error("Expected there to be a cancel error and for the response to be nil")
@@ -163,9 +223,24 @@ func TestRetryAfterMs(t *testing.T) {
 			},
 		}),
 	)
-	res, err := client.Clients.New(context.Background(), identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	res, err := client.Users.New(context.Background(), identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	})
 	if err == nil || res != nil {
 		t.Error("Expected there to be a cancel error and for the response to be nil")
@@ -188,9 +263,24 @@ func TestContextCancel(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithCancel(context.Background())
 	cancel()
-	res, err := client.Clients.New(cancelCtx, identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	res, err := client.Users.New(cancelCtx, identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	})
 	if err == nil || res != nil {
 		t.Error("Expected there to be a cancel error and for the response to be nil")
@@ -210,9 +300,24 @@ func TestContextCancelDelay(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithTimeout(context.Background(), 2*time.Millisecond)
 	defer cancel()
-	res, err := client.Clients.New(cancelCtx, identety.ClientNewParams{
-		Name: identety.F("name"),
-		Type: identety.F(identety.ClientNewParamsTypePublic),
+	res, err := client.Users.New(cancelCtx, identety.UserNewParams{
+		Address: identety.F(identety.UserNewParamsAddress{
+			Country:       identety.F("USA"),
+			Locality:      identety.F("New York"),
+			PostalCode:    identety.F("10001"),
+			Region:        identety.F("NY"),
+			StreetAddress: identety.F("123 Main St"),
+		}),
+		Email:      identety.F("john@example.com"),
+		FamilyName: identety.F("Doe"),
+		GivenName:  identety.F("John"),
+		Locale:     identety.F("en-US"),
+		Metadata: identety.F[any](map[string]interface{}{
+			"customField": "value",
+		}),
+		Name:     identety.F("John Doe"),
+		Password: identety.F("password123"),
+		Picture:  identety.F("https://example.com/photo.jpg"),
 	})
 	if err == nil || res != nil {
 		t.Error("expected there to be a cancel error and for the response to be nil")
@@ -238,9 +343,24 @@ func TestContextDeadline(t *testing.T) {
 				},
 			}),
 		)
-		res, err := client.Clients.New(deadlineCtx, identety.ClientNewParams{
-			Name: identety.F("name"),
-			Type: identety.F(identety.ClientNewParamsTypePublic),
+		res, err := client.Users.New(deadlineCtx, identety.UserNewParams{
+			Address: identety.F(identety.UserNewParamsAddress{
+				Country:       identety.F("USA"),
+				Locality:      identety.F("New York"),
+				PostalCode:    identety.F("10001"),
+				Region:        identety.F("NY"),
+				StreetAddress: identety.F("123 Main St"),
+			}),
+			Email:      identety.F("john@example.com"),
+			FamilyName: identety.F("Doe"),
+			GivenName:  identety.F("John"),
+			Locale:     identety.F("en-US"),
+			Metadata: identety.F[any](map[string]interface{}{
+				"customField": "value",
+			}),
+			Name:     identety.F("John Doe"),
+			Password: identety.F("password123"),
+			Picture:  identety.F("https://example.com/photo.jpg"),
 		})
 		if err == nil || res != nil {
 			t.Error("expected there to be a deadline error and for the response to be nil")
