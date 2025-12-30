@@ -10,6 +10,7 @@ import (
 	"io"
 	"math"
 	"math/rand"
+	"mime"
 	"net/http"
 	"net/url"
 	"runtime"
@@ -21,6 +22,7 @@ import (
 	"github.com/identety/identety-go-sdk/internal/apierror"
 	"github.com/identety/identety-go-sdk/internal/apiform"
 	"github.com/identety/identety-go-sdk/internal/apiquery"
+	"github.com/identety/identety-go-sdk/internal/param"
 )
 
 func getDefaultHeaders() map[string]string {
@@ -76,7 +78,17 @@ func getPlatformProperties() map[string]string {
 	}
 }
 
-func NewRequestConfig(ctx context.Context, method string, u string, body interface{}, dst interface{}, opts ...func(*RequestConfig) error) (*RequestConfig, error) {
+type RequestOption interface {
+	Apply(*RequestConfig) error
+}
+
+type RequestOptionFunc func(*RequestConfig) error
+type PreRequestOptionFunc func(*RequestConfig) error
+
+func (s RequestOptionFunc) Apply(r *RequestConfig) error    { return s(r) }
+func (s PreRequestOptionFunc) Apply(r *RequestConfig) error { return s(r) }
+
+func NewRequestConfig(ctx context.Context, method string, u string, body interface{}, dst interface{}, opts ...RequestOption) (*RequestConfig, error) {
 	var reader io.Reader
 
 	contentType := "application/json"
@@ -121,11 +133,13 @@ func NewRequestConfig(ctx context.Context, method string, u string, body interfa
 	// Fallback to json serialization if none of the serialization functions that we expect
 	// to see is present.
 	if body != nil && !hasSerializationFunc {
-		content, err := json.Marshal(body)
-		if err != nil {
+		buf := new(bytes.Buffer)
+		enc := json.NewEncoder(buf)
+		enc.SetEscapeHTML(true)
+		if err := enc.Encode(body); err != nil {
 			return nil, err
 		}
-		reader = bytes.NewBuffer(content)
+		reader = buf
 	}
 
 	req, err := http.NewRequestWithContext(ctx, method, u, nil)
@@ -173,16 +187,33 @@ func NewRequestConfig(ctx context.Context, method string, u string, body interfa
 	return &cfg, nil
 }
 
+func UseDefaultParam[T any](dst *param.Field[T], src *T) {
+	if !dst.Present && src != nil {
+		dst.Value = *src
+		dst.Present = true
+	}
+}
+
+// This interface is primarily used to describe an [*http.Client], but also
+// supports custom HTTP implementations.
+type HTTPDoer interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 // RequestConfig represents all the state related to one request.
 //
 // Editing the variables inside RequestConfig directly is unstable api. Prefer
-// composing func(\*RequestConfig) error instead if possible.
+// composing the RequestOption instead if possible.
 type RequestConfig struct {
 	MaxRetries     int
 	RequestTimeout time.Duration
 	Context        context.Context
 	Request        *http.Request
 	BaseURL        *url.URL
+	// DefaultBaseURL will be used if BaseURL is not explicitly overridden using
+	// WithBaseURL.
+	DefaultBaseURL *url.URL
+	CustomHTTPDoer HTTPDoer
 	HTTPClient     *http.Client
 	Middlewares    []middleware
 	APIKey         string
@@ -222,7 +253,7 @@ func shouldRetry(req *http.Request, res *http.Response) bool {
 		return true
 	}
 
-	// If the header explictly wants a retry behavior, respect that over the
+	// If the header explicitly wants a retry behavior, respect that over the
 	// http status code.
 	if res.Header.Get("x-should-retry") == "true" {
 		return true
@@ -348,7 +379,11 @@ func retryDelay(res *http.Response, retryCount int) time.Duration {
 
 func (cfg *RequestConfig) Execute() (err error) {
 	if cfg.BaseURL == nil {
-		return fmt.Errorf("requestconfig: base url is not set")
+		if cfg.DefaultBaseURL != nil {
+			cfg.BaseURL = cfg.DefaultBaseURL
+		} else {
+			return fmt.Errorf("requestconfig: base url is not set")
+		}
 	}
 
 	cfg.Request.URL, err = cfg.BaseURL.Parse(strings.TrimLeft(cfg.Request.URL.String(), "/"))
@@ -380,6 +415,9 @@ func (cfg *RequestConfig) Execute() (err error) {
 	}
 
 	handler := cfg.HTTPClient.Do
+	if cfg.CustomHTTPDoer != nil {
+		handler = cfg.CustomHTTPDoer.Do
+	}
 	for i := len(cfg.Middlewares) - 1; i >= 0; i -= 1 {
 		handler = applyMiddleware(cfg.Middlewares[i], handler)
 	}
@@ -425,6 +463,11 @@ func (cfg *RequestConfig) Execute() (err error) {
 		// Can't actually refresh the body, so we don't attempt to retry here
 		if cfg.Request.GetBody == nil && cfg.Request.Body != nil {
 			break
+		}
+
+		// Close the response body before retrying to prevent connection leaks
+		if res != nil && res.Body != nil {
+			res.Body.Close()
 		}
 
 		time.Sleep(retryDelay(res, retryCount))
@@ -479,13 +522,15 @@ func (cfg *RequestConfig) Execute() (err error) {
 	}
 
 	contents, err := io.ReadAll(res.Body)
+	res.Body.Close()
 	if err != nil {
 		return fmt.Errorf("error reading response body: %w", err)
 	}
 
 	// If we are not json, return plaintext
 	contentType := res.Header.Get("content-type")
-	isJSON := strings.Contains(contentType, "application/json") || strings.Contains(contentType, "application/vnd.api+json")
+	mediaType, _, _ := mime.ParseMediaType(contentType)
+	isJSON := strings.Contains(mediaType, "application/json") || strings.HasSuffix(mediaType, "+json")
 	if !isJSON {
 		switch dst := cfg.ResponseBodyInto.(type) {
 		case *string:
@@ -496,26 +541,26 @@ func (cfg *RequestConfig) Execute() (err error) {
 		case *[]byte:
 			*dst = contents
 		default:
-			return fmt.Errorf("expected destination type of 'string' or '[]byte' for responses with content-type that is not 'application/json'")
+			return fmt.Errorf("expected destination type of 'string' or '[]byte' for responses with content-type '%s' that is not 'application/json'", contentType)
 		}
 		return nil
 	}
 
-	// If the response happens to be a byte array, deserialize the body as-is.
 	switch dst := cfg.ResponseBodyInto.(type) {
+	// If the response happens to be a byte array, deserialize the body as-is.
 	case *[]byte:
 		*dst = contents
-	}
-
-	err = json.NewDecoder(bytes.NewReader(contents)).Decode(cfg.ResponseBodyInto)
-	if err != nil {
-		return fmt.Errorf("error parsing response json: %w", err)
+	default:
+		err = json.NewDecoder(bytes.NewReader(contents)).Decode(cfg.ResponseBodyInto)
+		if err != nil {
+			return fmt.Errorf("error parsing response json: %w", err)
+		}
 	}
 
 	return nil
 }
 
-func ExecuteNewRequest(ctx context.Context, method string, u string, body interface{}, dst interface{}, opts ...func(*RequestConfig) error) error {
+func ExecuteNewRequest(ctx context.Context, method string, u string, body interface{}, dst interface{}, opts ...RequestOption) error {
 	cfg, err := NewRequestConfig(ctx, method, u, body, dst, opts...)
 	if err != nil {
 		return err
@@ -549,12 +594,45 @@ func (cfg *RequestConfig) Clone(ctx context.Context) *RequestConfig {
 	return new
 }
 
-func (cfg *RequestConfig) Apply(opts ...func(*RequestConfig) error) error {
+func (cfg *RequestConfig) Apply(opts ...RequestOption) error {
 	for _, opt := range opts {
-		err := opt(cfg)
+		err := opt.Apply(cfg)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+// PreRequestOptions is used to collect all the options which need to be known before
+// a call to [RequestConfig.ExecuteNewRequest], such as path parameters
+// or global defaults.
+// PreRequestOptions will return a [RequestConfig] with the options applied.
+//
+// Only request option functions of type [PreRequestOptionFunc] are applied.
+func PreRequestOptions(opts ...RequestOption) (RequestConfig, error) {
+	cfg := RequestConfig{}
+	for _, opt := range opts {
+		if opt, ok := opt.(PreRequestOptionFunc); ok {
+			err := opt.Apply(&cfg)
+			if err != nil {
+				return cfg, err
+			}
+		}
+	}
+	return cfg, nil
+}
+
+// WithDefaultBaseURL returns a RequestOption that sets the client's default Base URL.
+// This is always overridden by setting a base URL with WithBaseURL.
+// WithBaseURL should be used instead of WithDefaultBaseURL except in internal code.
+func WithDefaultBaseURL(baseURL string) RequestOption {
+	u, err := url.Parse(baseURL)
+	return RequestOptionFunc(func(r *RequestConfig) error {
+		if err != nil {
+			return err
+		}
+		r.DefaultBaseURL = u
+		return nil
+	})
 }

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/identety/identety-go-sdk/internal/apijson"
 	"github.com/identety/identety-go-sdk/internal/apiquery"
@@ -37,7 +38,7 @@ func NewClientService(opts ...option.RequestOption) (r *ClientService) {
 
 // Create client
 func (r *ClientService) New(ctx context.Context, body ClientNewParams, opts ...option.RequestOption) (res *Client, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "clients"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -45,7 +46,7 @@ func (r *ClientService) New(ctx context.Context, body ClientNewParams, opts ...o
 
 // Get client details by id
 func (r *ClientService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Client, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -57,7 +58,7 @@ func (r *ClientService) Get(ctx context.Context, id string, opts ...option.Reque
 
 // Update client
 func (r *ClientService) Update(ctx context.Context, id string, body ClientUpdateParams, opts ...option.RequestOption) (res *Client, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -69,7 +70,7 @@ func (r *ClientService) Update(ctx context.Context, id string, body ClientUpdate
 
 // Get all clients
 func (r *ClientService) List(ctx context.Context, query ClientListParams, opts ...option.RequestOption) (res *ClientListResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "clients"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
@@ -77,7 +78,7 @@ func (r *ClientService) List(ctx context.Context, query ClientListParams, opts .
 
 // Delete client
 func (r *ClientService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (res *Client, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
