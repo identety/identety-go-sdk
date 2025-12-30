@@ -2,10 +2,10 @@
 
 <a href="https://pkg.go.dev/github.com/identety/identety-go-sdk"><img src="https://pkg.go.dev/badge/github.com/identety/identety-go-sdk.svg" alt="Go Reference"></a>
 
-The Identety Go library provides convenient access to [the Identety REST
-API](https://docs.identety.dev) from applications written in Go. The full API of this library can be found in [api.md](api.md).
+The Identety Go library provides convenient access to the [Identety REST API](https://docs.identety.dev)
+from applications written in Go.
 
-It is generated with [Stainless](https://www.stainlessapi.com/).
+It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
@@ -31,7 +31,7 @@ go get -u 'github.com/identety/identety-go-sdk@v0.1.0-alpha.1'
 
 ## Requirements
 
-This library requires Go 1.18+.
+This library requires Go 1.22+.
 
 ## Usage
 
