@@ -8,12 +8,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
-	"github.com/stainless-sdks/identety-go/internal/apijson"
-	"github.com/stainless-sdks/identety-go/internal/apiquery"
-	"github.com/stainless-sdks/identety-go/internal/param"
-	"github.com/stainless-sdks/identety-go/internal/requestconfig"
-	"github.com/stainless-sdks/identety-go/option"
+	"github.com/identety/identety-go-sdk/internal/apijson"
+	"github.com/identety/identety-go-sdk/internal/apiquery"
+	"github.com/identety/identety-go-sdk/internal/param"
+	"github.com/identety/identety-go-sdk/internal/requestconfig"
+	"github.com/identety/identety-go-sdk/option"
 )
 
 // UserService contains methods and other services that help with interacting with
@@ -37,7 +38,7 @@ func NewUserService(opts ...option.RequestOption) (r *UserService) {
 
 // Create client
 func (r *UserService) New(ctx context.Context, body UserNewParams, opts ...option.RequestOption) (res *User, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "users"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -45,7 +46,7 @@ func (r *UserService) New(ctx context.Context, body UserNewParams, opts ...optio
 
 // Get client details by id
 func (r *UserService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *User, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -57,7 +58,7 @@ func (r *UserService) Get(ctx context.Context, id string, opts ...option.Request
 
 // Update client
 func (r *UserService) Update(ctx context.Context, id string, body UserUpdateParams, opts ...option.RequestOption) (res *User, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -69,7 +70,7 @@ func (r *UserService) Update(ctx context.Context, id string, body UserUpdatePara
 
 // Get all users
 func (r *UserService) List(ctx context.Context, query UserListParams, opts ...option.RequestOption) (res *UserListResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "users"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
@@ -77,7 +78,7 @@ func (r *UserService) List(ctx context.Context, query UserListParams, opts ...op
 
 // Delete client
 func (r *UserService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (res *User, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -88,14 +89,14 @@ func (r *UserService) Delete(ctx context.Context, id string, opts ...option.Requ
 }
 
 type User struct {
-	ID         string      `json:"id,required"`
-	Address    UserAddress `json:"address,required"`
-	FamilyName string      `json:"familyName,required"`
-	GivenName  string      `json:"givenName,required"`
-	Locale     string      `json:"locale,required"`
-	Metadata   interface{} `json:"metadata,required"`
-	Name       string      `json:"name,required"`
-	Picture    string      `json:"picture,required"`
+	ID         string      `json:"id" api:"required"`
+	Address    UserAddress `json:"address" api:"required"`
+	FamilyName string      `json:"familyName" api:"required"`
+	GivenName  string      `json:"givenName" api:"required"`
+	Locale     string      `json:"locale" api:"required"`
+	Metadata   interface{} `json:"metadata" api:"required"`
+	Name       string      `json:"name" api:"required"`
+	Picture    string      `json:"picture" api:"required"`
 	JSON       userJSON    `json:"-"`
 }
 
@@ -122,11 +123,11 @@ func (r userJSON) RawJSON() string {
 }
 
 type UserAddress struct {
-	Country       string          `json:"country,required"`
-	Locality      string          `json:"locality,required"`
-	PostalCode    string          `json:"postalCode,required"`
-	Region        string          `json:"region,required"`
-	StreetAddress string          `json:"streetAddress,required"`
+	Country       string          `json:"country" api:"required"`
+	Locality      string          `json:"locality" api:"required"`
+	PostalCode    string          `json:"postalCode" api:"required"`
+	Region        string          `json:"region" api:"required"`
+	StreetAddress string          `json:"streetAddress" api:"required"`
 	JSON          userAddressJSON `json:"-"`
 }
 
@@ -150,8 +151,8 @@ func (r userAddressJSON) RawJSON() string {
 }
 
 type UserListResponse struct {
-	Meta  interface{}          `json:"meta,required"`
-	Nodes []User               `json:"nodes,required"`
+	Meta  interface{}          `json:"meta" api:"required"`
+	Nodes []User               `json:"nodes" api:"required"`
 	JSON  userListResponseJSON `json:"-"`
 }
 
@@ -173,15 +174,15 @@ func (r userListResponseJSON) RawJSON() string {
 }
 
 type UserNewParams struct {
-	Address    param.Field[UserNewParamsAddress] `json:"address,required"`
-	Email      param.Field[string]               `json:"email,required"`
-	FamilyName param.Field[string]               `json:"familyName,required"`
-	GivenName  param.Field[string]               `json:"givenName,required"`
-	Locale     param.Field[string]               `json:"locale,required"`
-	Metadata   param.Field[interface{}]          `json:"metadata,required"`
-	Name       param.Field[string]               `json:"name,required"`
-	Password   param.Field[string]               `json:"password,required"`
-	Picture    param.Field[string]               `json:"picture,required"`
+	Address    param.Field[UserNewParamsAddress] `json:"address" api:"required"`
+	Email      param.Field[string]               `json:"email" api:"required"`
+	FamilyName param.Field[string]               `json:"familyName" api:"required"`
+	GivenName  param.Field[string]               `json:"givenName" api:"required"`
+	Locale     param.Field[string]               `json:"locale" api:"required"`
+	Metadata   param.Field[interface{}]          `json:"metadata" api:"required"`
+	Name       param.Field[string]               `json:"name" api:"required"`
+	Password   param.Field[string]               `json:"password" api:"required"`
+	Picture    param.Field[string]               `json:"picture" api:"required"`
 }
 
 func (r UserNewParams) MarshalJSON() (data []byte, err error) {
@@ -189,11 +190,11 @@ func (r UserNewParams) MarshalJSON() (data []byte, err error) {
 }
 
 type UserNewParamsAddress struct {
-	Country       param.Field[string] `json:"country,required"`
-	Locality      param.Field[string] `json:"locality,required"`
-	PostalCode    param.Field[string] `json:"postalCode,required"`
-	Region        param.Field[string] `json:"region,required"`
-	StreetAddress param.Field[string] `json:"streetAddress,required"`
+	Country       param.Field[string] `json:"country" api:"required"`
+	Locality      param.Field[string] `json:"locality" api:"required"`
+	PostalCode    param.Field[string] `json:"postalCode" api:"required"`
+	Region        param.Field[string] `json:"region" api:"required"`
+	StreetAddress param.Field[string] `json:"streetAddress" api:"required"`
 }
 
 func (r UserNewParamsAddress) MarshalJSON() (data []byte, err error) {
@@ -201,13 +202,13 @@ func (r UserNewParamsAddress) MarshalJSON() (data []byte, err error) {
 }
 
 type UserUpdateParams struct {
-	Address    param.Field[UserUpdateParamsAddress] `json:"address,required"`
-	FamilyName param.Field[string]                  `json:"familyName,required"`
-	GivenName  param.Field[string]                  `json:"givenName,required"`
-	Locale     param.Field[string]                  `json:"locale,required"`
-	Metadata   param.Field[interface{}]             `json:"metadata,required"`
-	Name       param.Field[string]                  `json:"name,required"`
-	Picture    param.Field[string]                  `json:"picture,required"`
+	Address    param.Field[UserUpdateParamsAddress] `json:"address" api:"required"`
+	FamilyName param.Field[string]                  `json:"familyName" api:"required"`
+	GivenName  param.Field[string]                  `json:"givenName" api:"required"`
+	Locale     param.Field[string]                  `json:"locale" api:"required"`
+	Metadata   param.Field[interface{}]             `json:"metadata" api:"required"`
+	Name       param.Field[string]                  `json:"name" api:"required"`
+	Picture    param.Field[string]                  `json:"picture" api:"required"`
 }
 
 func (r UserUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -215,11 +216,11 @@ func (r UserUpdateParams) MarshalJSON() (data []byte, err error) {
 }
 
 type UserUpdateParamsAddress struct {
-	Country       param.Field[string] `json:"country,required"`
-	Locality      param.Field[string] `json:"locality,required"`
-	PostalCode    param.Field[string] `json:"postalCode,required"`
-	Region        param.Field[string] `json:"region,required"`
-	StreetAddress param.Field[string] `json:"streetAddress,required"`
+	Country       param.Field[string] `json:"country" api:"required"`
+	Locality      param.Field[string] `json:"locality" api:"required"`
+	PostalCode    param.Field[string] `json:"postalCode" api:"required"`
+	Region        param.Field[string] `json:"region" api:"required"`
+	StreetAddress param.Field[string] `json:"streetAddress" api:"required"`
 }
 
 func (r UserUpdateParamsAddress) MarshalJSON() (data []byte, err error) {
@@ -228,7 +229,7 @@ func (r UserUpdateParamsAddress) MarshalJSON() (data []byte, err error) {
 
 type UserListParams struct {
 	// Comma separated column names
-	Columns param.Field[UserListParamsColumns] `query:"columns,required"`
+	Columns param.Field[UserListParamsColumns] `query:"columns" api:"required"`
 	Limit   param.Field[float64]               `query:"limit"`
 	Page    param.Field[float64]               `query:"page"`
 	Sort    param.Field[UserListParamsSort]    `query:"sort"`

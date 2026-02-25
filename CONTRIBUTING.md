@@ -9,7 +9,7 @@ $ ./scripts/build
 
 This will install all the required dependencies and build the SDK.
 
-You can also [install go 1.18+ manually](https://go.dev/doc/install).
+You can also [install go 1.22+ manually](https://go.dev/doc/install).
 
 ## Modifying/Adding code
 
@@ -41,7 +41,7 @@ To use a local version of this library from source in another project, edit the 
 directive. This can be done through the CLI with the following:
 
 ```sh
-$ go mod edit -replace github.com/stainless-sdks/identety-go=/path/to/identety-go
+$ go mod edit -replace github.com/identety/identety-go-sdk=/path/to/identety-go-sdk
 ```
 
 ## Running tests
@@ -49,8 +49,7 @@ $ go mod edit -replace github.com/stainless-sdks/identety-go=/path/to/identety-g
 Most tests require you to [set up a mock server](https://github.com/stoplightio/prism) against the OpenAPI spec to run the tests.
 
 ```sh
-# you will need npm installed
-$ npx prism mock path/to/your/openapi.yml
+$ ./scripts/mock
 ```
 
 ```sh

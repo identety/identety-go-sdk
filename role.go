@@ -7,9 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
-	"github.com/stainless-sdks/identety-go/internal/requestconfig"
-	"github.com/stainless-sdks/identety-go/option"
+	"github.com/identety/identety-go-sdk/internal/requestconfig"
+	"github.com/identety/identety-go-sdk/option"
 )
 
 // RoleService contains methods and other services that help with interacting with
@@ -32,8 +33,8 @@ func NewRoleService(opts ...option.RequestOption) (r *RoleService) {
 }
 
 func (r *RoleService) Get(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return

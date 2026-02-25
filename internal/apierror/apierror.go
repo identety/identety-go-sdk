@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/stainless-sdks/identety-go/internal/apijson"
+	"github.com/identety/identety-go-sdk/internal/apijson"
 )
 
 // Error represents an error that originates from the API, i.e. when a request is

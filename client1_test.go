@@ -13,7 +13,7 @@ import (
 	"github.com/identety/identety-go-sdk/option"
 )
 
-func TestUserNew(t *testing.T) {
+func TestClientNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,24 +25,13 @@ func TestUserNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Users.New(context.TODO(), identety.UserNewParams{
-		Address: identety.F(identety.UserNewParamsAddress{
-			Country:       identety.F("USA"),
-			Locality:      identety.F("New York"),
-			PostalCode:    identety.F("10001"),
-			Region:        identety.F("NY"),
-			StreetAddress: identety.F("123 Main St"),
-		}),
-		Email:      identety.F("john@example.com"),
-		FamilyName: identety.F("Doe"),
-		GivenName:  identety.F("John"),
-		Locale:     identety.F("en-US"),
-		Metadata: identety.F[any](map[string]interface{}{
-			"customField": "value",
-		}),
-		Name:     identety.F("John Doe"),
-		Password: identety.F("password123"),
-		Picture:  identety.F("https://example.com/photo.jpg"),
+	_, err := client.Clients.New(context.TODO(), identety.ClientNewParams{
+		Name:          identety.F("name"),
+		Type:          identety.F(identety.ClientNewParamsTypePublic),
+		AllowedGrants: identety.F([]identety.ClientNewParamsAllowedGrant{identety.ClientNewParamsAllowedGrantAuthorizationCode}),
+		AllowedScopes: identety.F([]string{"string"}),
+		RedirectUris:  identety.F([]string{"string"}),
+		Settings:      identety.F[any](map[string]interface{}{}),
 	})
 	if err != nil {
 		var apierr *identety.Error
@@ -53,7 +42,7 @@ func TestUserNew(t *testing.T) {
 	}
 }
 
-func TestUserGet(t *testing.T) {
+func TestClientGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -65,7 +54,7 @@ func TestUserGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Users.Get(context.TODO(), "id")
+	_, err := client.Clients.Get(context.TODO(), "id")
 	if err != nil {
 		var apierr *identety.Error
 		if errors.As(err, &apierr) {
@@ -75,7 +64,7 @@ func TestUserGet(t *testing.T) {
 	}
 }
 
-func TestUserUpdate(t *testing.T) {
+func TestClientUpdateWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -87,25 +76,15 @@ func TestUserUpdate(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Users.Update(
+	_, err := client.Clients.Update(
 		context.TODO(),
 		"id",
-		identety.UserUpdateParams{
-			Address: identety.F(identety.UserUpdateParamsAddress{
-				Country:       identety.F("USA"),
-				Locality:      identety.F("New York"),
-				PostalCode:    identety.F("10001"),
-				Region:        identety.F("NY"),
-				StreetAddress: identety.F("123 Main St"),
-			}),
-			FamilyName: identety.F("Doe"),
-			GivenName:  identety.F("John"),
-			Locale:     identety.F("en-US"),
-			Metadata: identety.F[any](map[string]interface{}{
-				"customField": "value",
-			}),
-			Name:    identety.F("John Doe"),
-			Picture: identety.F("https://example.com/photo.jpg"),
+		identety.ClientUpdateParams{
+			Name:          identety.F("name"),
+			AllowedGrants: identety.F([]identety.ClientUpdateParamsAllowedGrant{identety.ClientUpdateParamsAllowedGrantAuthorizationCode}),
+			AllowedScopes: identety.F([]string{"string"}),
+			RedirectUris:  identety.F([]string{"string"}),
+			Settings:      identety.F[any](map[string]interface{}{}),
 		},
 	)
 	if err != nil {
@@ -117,7 +96,7 @@ func TestUserUpdate(t *testing.T) {
 	}
 }
 
-func TestUserListWithOptionalParams(t *testing.T) {
+func TestClientListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -129,11 +108,11 @@ func TestUserListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Users.List(context.TODO(), identety.UserListParams{
-		Columns: identety.F(identety.UserListParamsColumnsID),
+	_, err := client.Clients.List(context.TODO(), identety.ClientListParams{
+		Columns: identety.F(identety.ClientListParamsColumnsID),
 		Limit:   identety.F(0.000000),
 		Page:    identety.F(0.000000),
-		Sort:    identety.F(identety.UserListParamsSortAsc),
+		Sort:    identety.F(identety.ClientListParamsSortAsc),
 		SortBy:  identety.F("sortBy"),
 	})
 	if err != nil {
@@ -145,7 +124,7 @@ func TestUserListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestUserDelete(t *testing.T) {
+func TestClientDelete(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -157,7 +136,7 @@ func TestUserDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Users.Delete(context.TODO(), "id")
+	_, err := client.Clients.Delete(context.TODO(), "id")
 	if err != nil {
 		var apierr *identety.Error
 		if errors.As(err, &apierr) {
