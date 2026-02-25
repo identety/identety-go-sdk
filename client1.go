@@ -89,16 +89,16 @@ func (r *ClientService) Delete(ctx context.Context, id string, opts ...option.Re
 }
 
 type Client struct {
-	ID            string      `json:"id,required"`
-	AllowedGrants []string    `json:"allowedGrants,required"`
-	AllowedScopes []string    `json:"allowedScopes,required"`
-	ClientID      string      `json:"clientId,required"`
-	ClientSecret  string      `json:"clientSecret,required"`
-	IsActive      bool        `json:"isActive,required"`
-	Name          string      `json:"name,required"`
-	RedirectUris  []string    `json:"redirectUris,required"`
-	Settings      interface{} `json:"settings,required"`
-	Type          ClientType  `json:"type,required"`
+	ID            string      `json:"id" api:"required"`
+	AllowedGrants []string    `json:"allowedGrants" api:"required"`
+	AllowedScopes []string    `json:"allowedScopes" api:"required"`
+	ClientID      string      `json:"clientId" api:"required"`
+	ClientSecret  string      `json:"clientSecret" api:"required"`
+	IsActive      bool        `json:"isActive" api:"required"`
+	Name          string      `json:"name" api:"required"`
+	RedirectUris  []string    `json:"redirectUris" api:"required"`
+	Settings      interface{} `json:"settings" api:"required"`
+	Type          ClientType  `json:"type" api:"required"`
 	JSON          clientJSON  `json:"-"`
 }
 
@@ -143,8 +143,8 @@ func (r ClientType) IsKnown() bool {
 }
 
 type ClientListResponse struct {
-	Meta  interface{}            `json:"meta,required"`
-	Nodes []Client               `json:"nodes,required"`
+	Meta  interface{}            `json:"meta" api:"required"`
+	Nodes []Client               `json:"nodes" api:"required"`
 	JSON  clientListResponseJSON `json:"-"`
 }
 
@@ -167,9 +167,9 @@ func (r clientListResponseJSON) RawJSON() string {
 
 type ClientNewParams struct {
 	// Client Name
-	Name param.Field[string] `json:"name,required"`
+	Name param.Field[string] `json:"name" api:"required"`
 	// Client type
-	Type param.Field[ClientNewParamsType] `json:"type,required"`
+	Type param.Field[ClientNewParamsType] `json:"type" api:"required"`
 	// Allowed Grants
 	AllowedGrants param.Field[[]ClientNewParamsAllowedGrant] `json:"allowedGrants"`
 	// Allowed Scopes
@@ -219,7 +219,7 @@ func (r ClientNewParamsAllowedGrant) IsKnown() bool {
 
 type ClientUpdateParams struct {
 	// Client Name
-	Name param.Field[string] `json:"name,required"`
+	Name param.Field[string] `json:"name" api:"required"`
 	// Allowed Grants
 	AllowedGrants param.Field[[]ClientUpdateParamsAllowedGrant] `json:"allowedGrants"`
 	// Allowed Scopes
@@ -252,7 +252,7 @@ func (r ClientUpdateParamsAllowedGrant) IsKnown() bool {
 
 type ClientListParams struct {
 	// Comma separated column names
-	Columns param.Field[ClientListParamsColumns] `query:"columns,required"`
+	Columns param.Field[ClientListParamsColumns] `query:"columns" api:"required"`
 	Limit   param.Field[float64]                 `query:"limit"`
 	Page    param.Field[float64]                 `query:"page"`
 	Sort    param.Field[ClientListParamsSort]    `query:"sort"`
